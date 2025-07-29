@@ -1,0 +1,344 @@
+@import "tailwindcss";
+@import '../styles/_variables.scss';
+@import '../styles/_keyframe-animations.scss';
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
+
+/* Import Tailwind base utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Dark theme as default to match the original design */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 88%;
+
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 88%;
+
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 88%;
+
+    --primary: 0 0% 88%;
+    --primary-foreground: 0 0% 7%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 88%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 13 100% 62%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 88%;
+
+    --radius: 0.5rem;
+
+    /* Hover and interactive states */
+    --link-hover: 0 0% 75%;
+    --card-hover: 0 0% 10%;
+
+    /* Gradients for elegant effects */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent) / 0.8) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
+
+    /* Shadows using accent color */
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--accent) / 0.2);
+    --shadow-glow: 0 0 40px hsl(var(--accent) / 0.3);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Font families */
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-serif: 'Merriweather', Georgia, serif;
+
+    /* Container settings */
+    --container-padding: 2rem;
+    --container-max-width: 1400px;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-variation-settings: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.75rem; }
+  h4 { font-size: 1.5rem; }
+  h5 { font-size: 1.25rem; }
+  h6 { font-size: 1.125rem; }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  /* Links */
+  a {
+    /*color: hsl(var(--accent));*/
+    text-decoration: none;
+    transition: var(--transition-smooth);
+  }
+
+  a:hover {
+    color: hsl(var(--link-hover));
+  }
+
+  /* Form elements */
+  input, textarea, select {
+    background-color: hsl(var(--input));
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) - 2px);
+    color: hsl(var(--foreground));
+    font-family: inherit;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    transition: var(--transition-smooth);
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: hsl(var(--ring));
+    outline: 2px solid hsl(var(--ring) / 0.2);
+    outline-offset: 2px;
+  }
+
+  /* Buttons */
+  button {
+    background-color: hsl(var(--primary));
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) - 2px);
+    color: hsl(var(--primary-foreground));
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: var(--transition-smooth);
+  }
+
+  button:hover {
+    background-color: hsl(var(--primary) / 0.9);
+  }
+
+  /*button:focus {*/
+  /*  outline: 2px solid hsl(var(--ring));*/
+  /*  outline-offset: 2px;*/
+  /*}*/
+
+  /* Cards */
+  .card {
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    color: hsl(var(--card-foreground));
+    padding: 1.5rem;
+    transition: var(--transition-smooth);
+  }
+
+  .card:hover {
+    background-color: hsl(var(--card-hover));
+    box-shadow: var(--shadow-elegant);
+  }
+
+  /* Container */
+  .container {
+    margin: 0 auto;
+    max-width: var(--container-max-width);
+    padding: 0 var(--container-padding);
+    width: 100%;
+  }
+
+  /* Utility classes for gradients */
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .bg-gradient-subtle {
+    background: var(--gradient-subtle);
+  }
+
+  /* Shadow utilities */
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Animations */
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  .animate-accordion-down {
+    animation: accordion-down 0.2s ease-out;
+  }
+
+  .animate-accordion-up {
+    animation: accordion-up 0.2s ease-out;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  /* Focus styles for accessibility */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: hsl(var(--accent) / 0.3);
+    color: hsl(var(--accent-foreground));
+  }
+}
+
+
+/* --- TIPTAP EDITOR STYLES --- */
+
+.tiptap {
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  max-width: none;
+}
+
+.tiptap h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.tiptap h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tiptap h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.tiptap blockquote {
+  border-left: 4px solid hsl(var(--muted));
+  padding-left: 1rem;
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+  margin: 1rem 0;
+}
+
+.tiptap ul,
+.tiptap ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.tiptap ul {
+  list-style-type: disc;
+}
+
+.tiptap ol {
+  list-style-type: decimal;
+}
+
+.tiptap pre {
+  background-color: hsl(var(--muted));
+  font-size: 0.875rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.tiptap code {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--accent));
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.tiptap a {
+  color: hsl(var(--accent));
+  text-decoration: underline;
+}
