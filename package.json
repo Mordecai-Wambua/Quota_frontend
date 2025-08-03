@@ -16,6 +16,7 @@
     "@tiptap/extension-horizontal-rule": "^3.0.7",
     "@tiptap/extension-image": "^3.0.7",
     "@tiptap/extension-list": "^3.0.7",
+    "@tiptap/extension-placeholder": "^3.0.7",
     "@tiptap/extension-subscript": "^3.0.7",
     "@tiptap/extension-superscript": "^3.0.7",
     "@tiptap/extension-text-align": "^3.0.7",
@@ -26,10 +27,14 @@
     "@tiptap/starter-kit": "^3.0.7",
     "axios": "^1.11.0",
     "framer-motion": "^12.23.11",
+    "lodash.debounce": "^4.0.8",
+    "lucide-react": "^0.534.0",
     "next": "15.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-hotkeys-hook": "^5.1.0"
+    "react-hot-toast": "^2.5.2",
+    "react-hotkeys-hook": "^5.1.0",
+    "react-loading-skeleton": "^3.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

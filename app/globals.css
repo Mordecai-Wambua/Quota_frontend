@@ -152,7 +152,7 @@ All colors MUST be HSL.
 
   /* Buttons */
   button {
-    background-color: hsl(var(--primary));
+    /*background-color: hsl(var(--primary));*/
     border: 1px solid hsl(var(--border));
     border-radius: calc(var(--radius) - 2px);
     color: hsl(var(--primary-foreground));

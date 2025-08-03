@@ -68,6 +68,30 @@ body,
   padding: 3rem 3rem 30vh;
 }
 
+.simple-editor h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.simple-editor .description {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #888;
+  margin-bottom: 2rem;
+}
+
+
+.ProseMirror .is-editor-empty::before {
+  content: attr(data-placeholder);
+  color: #aaa;
+  pointer-events: none;
+  height: 0;
+  float: left;
+}
+
+
 @media screen and (max-width: 480px) {
   .simple-editor-content .tiptap.ProseMirror.simple-editor {
     padding: 1rem 1.5rem 30vh;

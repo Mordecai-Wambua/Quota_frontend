@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { useArticleLoader } from "@/hooks/useArticleLoader";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import SkeletonArticle from "@/components/articles/SkeletonArticle";
+import SkeletonArticle from "@/components/skeletons/SkeletonArticle";
 import { categories } from "@/app/data";
 import { ArticleList } from "@/components/constants";
 

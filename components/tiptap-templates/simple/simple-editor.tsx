@@ -4,6 +4,15 @@ import * as React from "react"
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
 import { Editor } from "@tiptap/core"
 
+// --- Me ---
+import { useRouter } from "next/navigation"
+import { useSaveEditor } from "@/hooks/useSaveEditor"
+import type { SaveOptions } from "@/hooks/useSaveEditor"
+import { Title } from "@/components/tiptap-node/title-node/title-node-extension"
+import { Description } from "@/components/tiptap-node/description-node/description-node-extension"
+import Placeholder from "@tiptap/extension-placeholder"
+
+
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
 import { Image } from "@tiptap/extension-image"
@@ -71,7 +80,6 @@ import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle"
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
-import { saveEditorContent } from "@/lib/save-editor-content"
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss"
@@ -83,16 +91,21 @@ const MainToolbarContent = ({
   onLinkClick,
   isMobile,
   editor,
-  title,
-  description,
+  previewMode,
+  setPreviewMode,
+  saveEditor
 }: {
   onHighlighterClick: () => void
   onLinkClick: () => void
   isMobile: boolean
   editor: Editor | null
-  title: string
-  description: string
+  previewMode: boolean
+  setPreviewMode: React.Dispatch<React.SetStateAction<boolean>>
+  saveEditor: (options: SaveOptions) => Promise<void>
 }) => {
+  const router = useRouter()
+  const savingRef = React.useRef(false);
+
   return (
     <>
       <Spacer />
@@ -152,15 +165,35 @@ const MainToolbarContent = ({
         <ImageUploadButton text="Add" />
       </ToolbarGroup>
 
-      <Spacer />
+      <ToolbarSeparator />
 
       <ToolbarGroup>
+        <Button onClick={() => setPreviewMode((prev) => !prev)}>
+          {previewMode ? "Exit Preview" : "Preview"}
+        </Button>
+
         <Button
-          onClick={() => saveEditorContent({ title, description, editor })}
+          onClick={async () => {
+            if (!editor || savingRef.current) return;
+            savingRef.current = true;
+
+            await saveEditor({
+              editor,
+              onSuccess: (slug) => {
+                router.push(`/articles/${slug}`);
+              },
+            });
+
+            savingRef.current = false;
+          }}
         >
           Save
         </Button>
+
+
       </ToolbarGroup>
+
+      <Spacer/>
 
       {isMobile && <ToolbarSeparator />}
 
@@ -207,12 +240,13 @@ export function SimpleEditor() {
     "main" | "highlighter" | "link"
   >("main")
   const toolbarRef = React.useRef<HTMLDivElement>(null)
-  const [title, setTitle] = React.useState("")
-  const [description, setDescription] = React.useState("")
+  const saveEditor = useSaveEditor()
+  const [previewMode, setPreviewMode] = React.useState(false)
 
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
+    editable: !previewMode,
     editorProps: {
       attributes: {
         autocomplete: "off",
@@ -223,12 +257,32 @@ export function SimpleEditor() {
       },
     },
     extensions: [
+      Title,
+      Description,
       StarterKit.configure({
         horizontalRule: false,
         link: {
           openOnClick: false,
           enableClickSelection: true,
         },
+      }),
+      Placeholder.configure({
+        placeholder: ({ node }) => {
+          switch (node.type.name) {
+            case "title":
+              return "Title..."
+            case "description":
+              return "Description..."
+            case "paragraph":
+              return "Start writing your article..."
+            default:
+              return ""
+          }
+        },
+        includeChildren: false,
+        emptyEditorClass: "is-editor-empty",
+        showOnlyCurrent: false,
+        showOnlyWhenEditable: false,
       }),
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -263,6 +317,13 @@ export function SimpleEditor() {
     }
   }, [isMobile, mobileView])
 
+  React.useEffect(() => {
+    if (editor) {
+      editor.setEditable(!previewMode)
+    }
+  }, [previewMode, editor])
+
+
   return (
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
@@ -285,8 +346,9 @@ export function SimpleEditor() {
               onLinkClick={() => setMobileView("link")}
               isMobile={isMobile}
               editor={editor}
-              title={title}
-              description={description}
+              previewMode={previewMode}
+              setPreviewMode={setPreviewMode}
+              saveEditor={saveEditor}
             />
           ) : (
             <MobileToolbarContent
@@ -296,30 +358,10 @@ export function SimpleEditor() {
           )}
         </Toolbar>
 
-        <div className="title-input-wrapper mb-6 px-2">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title"
-            className="w-full text-[32px] leading-tight font-bold border-none outline-none bg-transparent placeholder:text-gray-400 text-center placeholder:italic"
-          />
-        </div>
-
-        <div className="description-input-wrapper mb-6 px-2">
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description"
-            className="w-full text-[16px] leading-tight font-bold border-none outline-none bg-transparent placeholder:text-gray-400 text-center placeholder:italic"
-          />
-        </div>
-
         <EditorContent
           editor={editor}
           role="presentation"
-          className="simple-editor-content"
+          className={`simple-editor-content ${previewMode ? "min-h-screen min-w-3/4 border rounded bg-muted/10 " : ""}`}
         />
       </EditorContext.Provider>
     </div>

@@ -1,8 +1,8 @@
 {
   "type": "doc",
   "content": [
-    {
-      "type": "paragraph"
-    }
+    { "type": "title" },
+    { "type": "description" },
+    { "type": "paragraph" }
   ]
 }

@@ -2,8 +2,8 @@ import {Login} from "@/components/auth/Login";
 
 export default function LoginPage() {
     return(
-        <>
-            <Login/>
-        </>
+      <div className="min-h-screen bg-background text-white">
+        <Login />
+      </div>
     )
 }

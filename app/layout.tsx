@@ -1,7 +1,9 @@
 import { Inter } from "next/font/google";
 import { Playfair_Display } from "next/font/google";
-import {UserProvider} from "@/context/UserContext";
+import { Toaster } from "react-hot-toast";
 
+
+import {UserProvider} from "@/context/UserContext";
 import {Header} from "@/components/layout/Header";
 import {Footer} from "@/components/layout/Footer";
 import "./globals.css";
@@ -22,6 +24,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <UserProvider>
                 <Header />
                 {children}
+                <Toaster
+                  position="top-center"
+                  toastOptions={{
+                      style: {
+                          background: "#1f1f1f", // Dark background
+                          color: "#fff",         // Light text
+                          border: "1px solid #333",
+                      },
+                      success: {
+                          iconTheme: {
+                              primary: "#4ade80",  // e.g., green
+                              secondary: "#1f1f1f",
+                          },
+                      },
+                      error: {
+                          iconTheme: {
+                              primary: "#f87171",  // e.g., red
+                              secondary: "#1f1f1f",
+                          },
+                      },
+                  }}
+                />
+
                 <Footer />
             </UserProvider>
         </body>

@@ -1,5 +1,5 @@
-// lib/axiosClient.ts
-import {api_url} from "@/components/constants";
+const api_url = process.env.VITE_API_BASE_URL;
+
 import axios from "axios";
 
 const axiosClient = axios.create({

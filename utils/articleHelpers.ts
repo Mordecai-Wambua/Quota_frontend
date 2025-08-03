@@ -19,3 +19,12 @@ export function mergeUniqueArticles(
   const ids = new Set(current.map((a) => a.id));
   return [...current, ...incoming.filter((a) => !ids.has(a.id))];
 }
+
+
+export function applyDelayPost(
+  callback: () => void,
+  ms: number,
+  ref: React.MutableRefObject<NodeJS.Timeout | null>
+) {
+  ref.current = setTimeout(callback, ms);
+}
