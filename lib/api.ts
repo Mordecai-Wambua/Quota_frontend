@@ -1,6 +1,8 @@
 import {
     LoginPayload,
     LoginResponse,
+    RegisterPayload,
+    RegisterResponse,
     ArticlePayload
 } from "@/components/constants";
 
@@ -33,6 +35,46 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
     }
 }
 
+export async function register(payload: RegisterPayload): Promise<RegisterResponse> {
+    try {
+        const res = await axios.post("/api/auth/register/", payload);
+        return res.data;
+    } catch (error: any) {
+        console.error("Registration failed", error);
+
+        if (error.response?.data && typeof error.response.data === "object") {
+            // Let the component handle the structure
+            throw { fieldErrors: error.response.data };
+        }
+
+        throw new Error("Registration failed");
+    }
+}
+
+// Request email verification
+export async function verifyEmail(token: string): Promise<{ message: string }> {
+    try {
+        const res = await axios.get(`/api/auth/verify-email/?token=${token}`);
+        return res.data;
+    } catch (error: any) {
+        const message =
+          error.response?.data?.detail || error.message || "Verification failed";
+        throw new Error(message);
+    }
+}
+
+// Resend verification email
+export async function resendVerificationEmail(email: string): Promise<{ message: string }> {
+    try {
+        const res = await axios.post("/api/auth/resend-verification/", { email });
+        return res.data;
+    } catch (error: any) {
+        const message =
+          error.response?.data?.detail || error.message || "Resend failed";
+        throw new Error(message);
+    }
+}
+
 export async function logout() {
     try {
         const res = await axios.post("/api/auth/logout/");
@@ -52,8 +94,7 @@ export async function dashboard(page = 1, category = "") {
         }
 
         const res = await axios.get("/api/auth/dashboard/", { params });
-
-        return res.data; // axiosClient already handles baseURL, credentials, headers
+        return res.data;
     } catch (error: any) {
         const message =
           error.response?.data?.message || "Failed to load dashboard data";

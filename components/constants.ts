@@ -1,9 +1,15 @@
 import {JSONContent} from "@tiptap/core";
 
-export const api_url = "http://localhost:8000";
 
 export interface LoginPayload {
   email: string;
+  password: string;
+}
+
+export interface RegisterPayload {
+  email: string;
+  first_name: string;
+  last_name: string;
   password: string;
 }
 
@@ -16,6 +22,15 @@ export interface LoginResponse {
     last_name: string;
     role: string;
   };
+}
+
+export interface RegisterResponse {
+  user: {
+    email: string;
+    first_name: string;
+    last_name: string;
+  }
+  message: string;
 }
 
 export interface Post {

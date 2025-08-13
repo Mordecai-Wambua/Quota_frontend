@@ -4,6 +4,9 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { login } from "@/lib/api";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+
 
 
 interface LoginFormData {
@@ -21,6 +24,9 @@ interface FormField {
 
 export const Login = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const registered = searchParams.get("registered") === "1";
+
     const [formData, setFormData] = useState<LoginFormData>({
         email: "",
         password: "",
@@ -43,7 +49,6 @@ export const Login = () => {
 
         try {
             const res = await login(formData);
-            console.log("Login successful:", res);
             setUser(res.user);
 
             router.replace("/dashboard");
@@ -78,6 +83,13 @@ export const Login = () => {
         <section className="max-w-md mx-auto px-6 py-16 mt-16">
             <h2 className="text-2xl text-center font-serif mb-8 text-white">Login</h2>
 
+            {registered && (
+              <div className="text-green-500 text-sm text-center mb-4">
+                  Registration successful! Please check your email to verify your account.
+              </div>
+            )}
+
+
             <form
                 onSubmit={handleSubmit}
                 className="space-y-6 bg-[#1a1a1a] p-6 rounded-xl shadow-md"
@@ -107,10 +119,12 @@ export const Login = () => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+                    className="w-full bg-gradient-primary hover:bg-gradient-primary text-white py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
                 >
                     {loading ? "Logging in..." : "Log In"}
                 </button>
+
+                <p className="text-sm text-center">Don't have an account? <Link href="/register" className=" transition-colors">Register</Link></p>
             </form>
         </section>
     );

@@ -1,10 +1,13 @@
 "use client";
 
+
 import { useUser } from "@/context/UserContext";
 import { logout } from "@/lib/api";
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react"; // icons
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export const Header = () => {
   const { user, loaded } = useUser();
@@ -12,13 +15,21 @@ export const Header = () => {
 
   if (!loaded) {
     return (
-      <header className="flex items-center justify-between px-6 py-4 animate-pulse">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gray-700" />
-          <div className="w-32 h-4 bg-gray-700 rounded" />
-        </div>
-        <div className="w-40 h-4 bg-gray-700 rounded" />
-      </header>
+      <SkeletonTheme baseColor="#2d2d2d" highlightColor="#3c3c3c">
+        <header
+          className="flex items-center justify-between px-6 py-4"
+          aria-busy="true"
+        >
+          {/* Left side: avatar + text */}
+          <div className="flex items-center gap-3">
+            <Skeleton circle width={32} height={32} />
+            <Skeleton height={16} width={128} borderRadius={4} />
+          </div>
+
+          {/* Right side: text block */}
+          <Skeleton height={16} width={160} borderRadius={4} />
+        </header>
+      </SkeletonTheme>
     );
   }
 
@@ -60,7 +71,7 @@ export const Header = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 rounded-md  text-white hover:bg-gray-950 transition-colors"
+          className="md:hidden "
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle Menu"
         >
@@ -74,7 +85,9 @@ export const Header = () => {
           <Link href="/" className="text-foreground hover:text-accent transition-colors" onClick={() => setIsOpen(false)}>Home</Link>
           <Link href="/articles" className="text-muted-foreground hover:text-accent transition-colors" onClick={() => setIsOpen(false)}>Articles</Link>
           {!user && (
-            <Link href="/login" className="text-muted-foreground hover:text-accent transition-colors" onClick={() => setIsOpen(false)}>Login</Link>
+            <button >
+              <Link href="/login" className="text-muted-foreground hover:text-accent transition-colors" onClick={() => setIsOpen(false)}>Login</Link>
+            </button>
           )}
           {user && (
             <>

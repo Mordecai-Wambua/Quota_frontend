@@ -14,13 +14,13 @@
 
 
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
-All colors MUST be HSL.
+/*
+  Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+  All colors MUST be HSL.
 */
-
 @layer base {
   :root {
-    /* Dark theme as default to match the original design */
+    /* Dark theme */
     --background: 0 0% 7%;
     --foreground: 0 0% 88%;
 
@@ -50,6 +50,12 @@ All colors MUST be HSL.
     --ring: 0 0% 88%;
 
     --radius: 0.5rem;
+
+    /* Article specific colors */
+    --article-title: 0 0% 95%;
+    --article-title-hover: 13 100% 62%;
+    --article-description: 0 0% 75%;
+    --article-meta: 0 0% 65%;
 
     /* Hover and interactive states */
     --link-hover: 0 0% 75%;
@@ -108,6 +114,7 @@ All colors MUST be HSL.
     font-weight: 600;
     line-height: 1.2;
     margin-bottom: 1rem;
+    color: hsl(var(--muted-foreground));
   }
 
   h1 { font-size: 2.5rem; }
@@ -119,17 +126,37 @@ All colors MUST be HSL.
 
   p {
     margin-bottom: 1rem;
+    color: hsl(var(--foreground));
   }
 
   /* Links */
   a {
-    /*color: hsl(var(--accent));*/
+    color: hsl(var(--accent));
     text-decoration: none;
     transition: var(--transition-smooth);
   }
 
   a:hover {
     color: hsl(var(--link-hover));
+  }
+
+  /* Article Specific Styles */
+  .article-title {
+    color: hsl(var(--article-title));
+    transition: var(--transition-smooth);
+  }
+
+  .article-title:hover {
+    color: hsl(var(--article-title-hover));
+  }
+
+  .article-description {
+    color: hsl(var(--article-description));
+  }
+
+  .article-meta {
+    color: hsl(var(--article-meta));
+    font-size: 0.875rem;
   }
 
   /* Form elements */
@@ -151,29 +178,29 @@ All colors MUST be HSL.
   }
 
   /* Buttons */
-  button {
-    /*background-color: hsl(var(--primary));*/
-    border: 1px solid hsl(var(--border));
-    border-radius: calc(var(--radius) - 2px);
-    color: hsl(var(--primary-foreground));
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    transition: var(--transition-smooth);
-  }
+    button {
+        border: 1px solid hsl(var(--border));
+        border-radius: calc(var(--radius) - 2px);
+        color: hsl(var(--foreground));
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transform: scale(1);
+        transition: transform 100ms ease;
+    }
 
-  button:hover {
-    background-color: hsl(var(--primary) / 0.9);
-  }
+    button:hover {
+        background-color: hsl(var(--card));
+    }
 
-  /*button:focus {*/
-  /*  outline: 2px solid hsl(var(--ring));*/
-  /*  outline-offset: 2px;*/
-  /*}*/
+    button:active {
+        transform: scale(0.95);
+    }
 
-  /* Cards */
+
+    /* Cards */
   .card {
     background-color: hsl(var(--card));
     border: 1px solid hsl(var(--border));
@@ -285,6 +312,7 @@ All colors MUST be HSL.
   font-size: 1.875rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  color: hsl(var(--foreground));
 }
 
 .tiptap h2 {
@@ -292,6 +320,7 @@ All colors MUST be HSL.
   font-weight: 600;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
+  color: hsl(var(--foreground));
 }
 
 .tiptap h3 {
@@ -299,6 +328,7 @@ All colors MUST be HSL.
   font-weight: 600;
   margin-top: 1rem;
   margin-bottom: 0.75rem;
+  color: hsl(var(--foreground));
 }
 
 .tiptap blockquote {
@@ -341,4 +371,28 @@ All colors MUST be HSL.
 .tiptap a {
   color: hsl(var(--accent));
   text-decoration: underline;
+}
+
+/* --- ARTICLE LIST STYLES --- */
+.article-list {
+  a {
+    @apply transition-colors;
+  }
+
+  .article-title {
+    @apply text-[hsl(var(--foreground))] hover:text-[hsl(var(--accent))] transition-colors;
+    font-weight: 500;
+  }
+
+  .article-description {
+    @apply text-[hsl(var(--muted-foreground))];
+  }
+
+  .article-meta {
+    @apply text-[hsl(var(--muted-foreground))] text-sm;
+  }
+
+  .article-divider {
+    @apply border-[hsl(var(--border))];
+  }
 }

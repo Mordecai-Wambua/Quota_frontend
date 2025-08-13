@@ -3,6 +3,9 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { getCurrentUser } from '@/lib/api'
 
+const PUBLIC_ROUTES = ["/", "/login", "/register", "/about", "/verify", "/contact", "/articles", "/articles/[slug]"];
+
+
 interface User {
     email: string;
     first_name: string;
@@ -32,6 +35,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const path = window.location.pathname;
+        console.log("Path:", path);
+        const isPublic = PUBLIC_ROUTES.some(route => path === route || path.startsWith(route + "/"));
+        console.log("Is Public:", isPublic);
+
+        if (isPublic) {
+            setLoaded(true); // Don't fetch the user
+            return;
+        }
+
         const existingUser = sessionStorage.getItem("user");
         if (existingUser) {
             setUserState(JSON.parse(existingUser));
@@ -45,21 +60,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             if (res.ok && res.data?.user) {
                 setUser(res.data.user);
             } else {
-                console.warn("Unauthenticated or failed to fetch user:", res.error);
-
-                // Only redirect if not already on login page
-                if (
-                  typeof window !== "undefined" &&
-                  !window.location.pathname.startsWith("/login")
-                ) {
-                    window.location.href = "/login";
-                    return;
-                }
+                window.location.href = "/login";
+                return;
             }
             setLoaded(true);
         };
+
         fetchUser();
     }, []);
+
 
     return (
       <UserContext.Provider value={{ user, setUser, loaded }}>

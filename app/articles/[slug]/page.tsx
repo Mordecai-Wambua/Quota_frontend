@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useEditor, EditorContent } from "@tiptap/react";
+import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
-// -- Tip tap ---
 import { StarterKit } from "@tiptap/starter-kit";
 import { Title } from "@/components/tiptap-node/title-node/title-node-extension";
 import { Description } from "@/components/tiptap-node/description-node/description-node-extension";
@@ -32,9 +33,7 @@ export default function PostDetail() {
       Title,
       Description,
       Image,
-      StarterKit.configure({
-        horizontalRule: false,
-      }),
+      StarterKit.configure({ horizontalRule: false }),
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       TaskList,
@@ -51,22 +50,12 @@ export default function PostDetail() {
   useEffect(() => {
     if (slug) {
       setIsLoading(true);
-      console.log("Starting to load article..."); // Debug log
-      // Add delay for testing
       setTimeout(() => {
         getArticle(slug as string)
-          .then((data) => {
-            console.log("Article loaded:", data); // Debug log
-            setPost(data);
-          })
-          .catch((error) => {
-            console.error("Error loading article:", error); // Debug log
-          })
-          .finally(() => {
-            console.log("Loading finished"); // Debug log
-            setIsLoading(false);
-          });
-      }, 2000); // 2 second delay
+          .then((data) => setPost(data))
+          .catch((error) => toast.error(error.message))
+          .finally(() => setIsLoading(false));
+      }, 2000);
     }
   }, [slug]);
 
@@ -76,70 +65,85 @@ export default function PostDetail() {
     }
   }, [editor, post?.content]);
 
-  // Debug logs
-  console.log("Render state:", { isLoading, post: !!post, editor: !!editor });
-
-  // Show skeleton while loading or if editor/post is not ready
-  if (isLoading || !post || !editor) {
-    console.log("Showing skeleton"); // Debug log
-    return <PostDetailSkeleton />;
-  }
-
-  console.log("Showing main content"); // Debug log
-
   return (
-    <div className="min-h-screen bg-background text-foreground animate-fade-in">
-      <main className="max-w-3xl mx-auto px-6 py-16 space-y-12">
-
-        {/* Back link */}
-        <div className="mb-4">
-          <Link
-            href="/articles"
-            className="inline-flex items-center gap-2 bg-muted text-muted-foreground px-4 py-2 rounded-md hover:bg-muted/80 transition-colors text-sm font-medium shadow-sm"
+    <div className="min-h-screen bg-background text-foreground">
+      <AnimatePresence mode="wait">
+        {isLoading || !post || !editor ? (
+          // Skeleton phase
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.4, ease: "easeInOut" } }}
           >
-            <span className="text-lg">←</span> All articles
-          </Link>
-        </div>
+            <PostDetailSkeleton />
+          </motion.div>
+        ) : (
+          // Content phase with morph
+          <motion.main
+            key="content"
+            layoutId="post-wrapper"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="max-w-4xl mx-auto px-6 space-y-12 py-6"
+          >
+            {/* Back link */}
+            <motion.div layoutId="back-link">
+              <Link
+                href="/articles"
+                className="inline-flex items-center gap-2 bg-muted text-muted-foreground px-4 py-2 rounded-md hover:bg-muted/80 transition-colors text-sm font-medium shadow-sm"
+              >
+                <span className="text-lg">←</span> All articles
+              </Link>
+            </motion.div>
 
-        {/* Content */}
-        <div className="prose prose-invert max-w-none tiptap">
-          <EditorContent editor={editor} />
-        </div>
+            {/* Content */}
+            <motion.div layoutId="post-body" className="prose prose-invert max-w-none tiptap mt-6">
+              <EditorContent editor={editor} />
+            </motion.div>
 
-        {/* Divider */}
-        <hr className="border-border opacity-40 my-10" />
+            {/* Divider */}
+            <motion.hr layoutId="divider" className="border-border opacity-40 my-10" />
 
-        {/* Metadata */}
-        <div className="rounded-md border border-border bg-muted/10 p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
-          <div className="flex flex-col gap-1">
-            <p className="text-muted-foreground font-semibold flex items-center gap-1">
-              <span>📅</span> Published
-            </p>
-            <p className="text-foreground">
-              {new Date(post.created_at).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </p>
-          </div>
+            {/* Metadata */}
+            <motion.div
+              layoutId="post-meta"
+              className="rounded-md border border-border bg-muted/10 p-2 sm:p-4 grid gap-4 sm:gap-6 text-sm [grid-template-columns:repeat(auto-fit,minmax(100px,1fr))] justify-items-center"
+            >
+              {/* Published */}
+              <div className="flex flex-col gap-1 items-center text-center sm:items-start sm:text-left">
+                <p className="text-muted-foreground font-semibold flex items-center gap-1 flex-wrap">
+                  <span>📅</span> <span>Published</span>
+                </p>
+                <p className="text-foreground break-words">
+                  {new Date(post.created_at).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+              </div>
 
-          <div className="flex flex-col gap-1">
-            <p className="text-muted-foreground font-semibold flex items-center gap-1">
-              <span>🏷️</span> Topic
-            </p>
-            <p className="text-foreground">{post.category ?? "Uncategorized"}</p>
-          </div>
+              {/* Topic */}
+              <div className="flex flex-col gap-1 items-center text-center sm:items-start sm:text-left">
+                <p className="text-muted-foreground font-semibold flex items-center gap-1 flex-wrap">
+                  <span>🏷️</span> <span>Topic</span>
+                </p>
+                <p className="text-foreground break-words">{post.category}</p>
+              </div>
 
-          <div className="flex flex-col gap-1">
-            <p className="text-muted-foreground font-semibold flex items-center gap-1">
-              <span>✍️</span> Author
-            </p>
-            <p className="text-foreground">{post.author ?? "Anonymous"}</p>
-          </div>
-        </div>
-
-      </main>
+              {/* Author */}
+              <div className="flex flex-col gap-1 items-center text-center sm:items-start sm:text-left">
+                <p className="text-muted-foreground font-semibold flex items-center gap-1 flex-wrap">
+                  <span>✍️</span> <span>Author</span>
+                </p>
+                <p className="text-foreground break-words">{post.author}</p>
+              </div>
+            </motion.div>
+          </motion.main>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

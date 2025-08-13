@@ -1,6 +1,6 @@
-const api_url = process.env.VITE_API_BASE_URL;
-
 import axios from "axios";
+
+const api_url = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const axiosClient = axios.create({
   baseURL: api_url,
